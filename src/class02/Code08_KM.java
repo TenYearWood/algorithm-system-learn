@@ -1,6 +1,7 @@
 package class02;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class Code08_KM {
@@ -15,15 +16,20 @@ public class Code08_KM {
             }
         }
 
-        int ans = 0;
-        for(Map.Entry<Integer, Integer> entry : map.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
             if (entry.getValue() == k) {
-                ans = entry.getKey();
+                return entry.getKey();
             }
         }
-        return ans;
+        return -1;
     }
 
+    /**
+     * 请保证arr中，只有一种数出现了K次，其他数都出现了M次。
+     * <p>
+     * 别看有两个for循环，但是下面的for循环次数是固定的，32次。所以时间复杂度是O(n)
+     * 虽然申请了一个数组，但是长度也是固定32个。额外空间复杂度是O(1)
+     */
     public static int onlyKTimes(int[] arr, int k, int m) {
         int[] t = new int[32];
         // t[0] 0位置的1出现了几个
@@ -42,12 +48,80 @@ public class Code08_KM {
         return ans;
     }
 
-    public static void main(String[] args) {
-        int[] arr = {4, 3, 1, 3, 3, 1, 1, 4};
-        int k = 2;
-        int m = 3;
-        System.out.println(onlyKTimes(arr, k, m));
+    public static int[] randomArray(int maxKinds, int range, int k, int m) {
+        int ktimeNum = randomNumber(range);
+        //产生多少种数，最少2种
+        int numKinds = (int) (Math.random() * maxKinds) + 2;
+        //数组的长度, k * 1 + (numKinds - 1) * m
+        int[] arr = new int[k + (numKinds - 1) * m];
+        //先在数组中填充出现K次的数
+        int index = 0;
+        for (; index < k; index++) {
+            arr[index] = ktimeNum;
+        }
+        //继续填充出现M次的数
+        numKinds--;
+        HashSet<Integer> set = new HashSet<>();
+        set.add(ktimeNum);
+        while (numKinds != 0) {
+            int curNum = 0;
+            do {
+                curNum = randomNumber(range);
+            } while (set.contains(curNum));
+            set.add(curNum);
+            numKinds--;
+            for (int i = 0; i < m; i++) {
+                arr[index++] = curNum;
+            }
+        }
 
-        System.out.println(test(arr, k, m));
+        //arr 填好了，但是顺序太有规律了，进行调整一下
+        // i位置的数，我想随机和j位置的数做交换
+        for (int i = 0; i < arr.length; i++) {
+            int j = (int) (Math.random() * arr.length);  // 0 ~ N -1
+            int tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
+        }
+        return arr;
+    }
+
+    /**
+     * 产生一个 [-Range, +Range]之间的随机数
+     */
+    public static int randomNumber(int range) {
+        return (int) ((range + 1) * Math.random()) - (int) ((range + 1) * Math.random());
+    }
+
+    public static void main(String[] args) {
+        int[] array = {4, 3, 1, 3, 3, 1, 1, 4};
+        int k1 = 2;
+        int m1 = 3;
+        //System.out.println(onlyKTimes(array, k1, m1));
+        //System.out.println(test(array, k1, m1));
+
+        //使用对数器进行测试
+        int kinds = 10;     //测试数组中最多有10种数
+        int range = 200;    //数组中数据大小范围 -200 ~ 200
+        int testTimes = 100000;
+        int max = 9;
+        System.out.println("测试开始");
+        for (int i = 0; i < testTimes; i++) {
+            int a = (int) (Math.random() * max) + 1;        //a  1 ~ 9
+            int b = (int) (Math.random() * max) + 1;        //b  1 ~ 9
+            int k = Math.min(a, b);
+            int m = Math.max(a, b);
+            if (k == m) {   // 确保K < M
+                m++;
+            }
+
+            int[] arr = randomArray(kinds, range, k, m);
+            int ans1 = test(arr, k, m);
+            int ans2 = onlyKTimes(arr, k, m);
+            if (ans1 != ans2) {
+                System.out.println("出错了!");
+            }
+        }
+        System.out.println("测试结束");
     }
 }
