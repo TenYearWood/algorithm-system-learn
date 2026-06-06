@@ -6,6 +6,10 @@ import java.util.Map;
 
 public class Code08_KM {
 
+    /**
+     * 用来做对数器的对照方法
+     * 保证这个一定是正确的，这里用hashMap词频统计来实现
+     */
     public static int test(int[] arr, int k, int m) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < arr.length; i++) {
@@ -48,6 +52,14 @@ public class Code08_KM {
         return ans;
     }
 
+    /**
+     * 用来产生一个随机数组
+     * @param maxKinds  出现多少种数
+     * @param range 每个数的大小范围
+     * @param k 出现k次
+     * @param m 出现m次  k < m
+     * @return
+     */
     public static int[] randomArray(int maxKinds, int range, int k, int m) {
         int ktimeNum = randomNumber(range);
         //产生多少种数，最少2种
