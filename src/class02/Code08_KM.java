@@ -1,6 +1,28 @@
 package class02;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Code08_KM {
+
+    public static int test(int[] arr, int k, int m) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            if (map.containsKey(arr[i])) {
+                map.put(arr[i], map.get(arr[i]) + 1);
+            } else {
+                map.put(arr[i], 1);
+            }
+        }
+
+        int ans = 0;
+        for(Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == k) {
+                ans = entry.getKey();
+            }
+        }
+        return ans;
+    }
 
     public static int onlyKTimes(int[] arr, int k, int m) {
         int[] t = new int[32];
@@ -25,5 +47,7 @@ public class Code08_KM {
         int k = 2;
         int m = 3;
         System.out.println(onlyKTimes(arr, k, m));
+
+        System.out.println(test(arr, k, m));
     }
 }
